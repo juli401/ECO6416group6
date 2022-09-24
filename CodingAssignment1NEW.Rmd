@@ -1,0 +1,166 @@
+---
+title: "Coding Assignment 1"
+author: "Team 6"
+date: "Due: 2022-09-25 23:59"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r packages}
+library(readxl)
+library(gtsummary)
+library(tidyverse)
+library(plotly)
+library(gt)
+library(corrplot)
+```
+
+
+A Florida health insurance company wants to predict annual claims for individual clients. The company pulls a random sample of 50 customers. The owner wishes to charge an actuarially fair premium to ensure a normal rate of return. The owner collects all of their current customer’s health care expenses from the last year and compares them with what is known about each customer’s plan. 
+
+The data on the 50 customers in the sample is as follows:
+
+-	Charges: Total medical expenses for a particular insurance plan (in dollars)
+-	Age: Age of the primary beneficiary
+-	BMI: Primary beneficiary’s body mass index (kg/m2)
+-	Female: Primary beneficiary’s birth sex (0 = Male, 1 = Female)
+-	Children: Number of children covered by health insurance plan (includes other dependents as well)
+-	Smoker: Indicator if primary beneficiary is a smoker (0 = non-smoker, 1 = smoker)
+-	Cities: Dummy variables for each city with the default being Sanford
+
+Answer the following questions using complete sentences and attach all output, plots, etc. within this report.
+
+
+**For this assignment, ignore the categorical variables (gender, smoker, cities)**
+
+```{r}
+insurance2 <- read_excel("../Data/insurance_0126_Group6.xlsx")
+insurance1 <- subset(insurance2, select = c("Charges","Age","BMI","Children"))
+```
+
+
+
+# Question 1
+
+Perform univariate analyses on the quantitative variables (center, shape, spread). Include descriptive statistics, and histograms. Be sure to use terms discussed in class such as bimodal, skewed left, etc.
+
+```{r q1}
+# CENTER 
+summary(insurance1)
+
+#MODE
+getModes <- function(x) {
+ux <- unique(x)
+tab <- tabulate(match(x, ux))
+ux[tab == max(tab)]
+}
+getModes(insurance1$Charges)
+getModes(insurance1$Age)
+getModes(insurance1$BMI)
+getModes(insurance1$Children)
+
+#SHAPE
+hist(insurance1$Charges)
+hist(insurance1$Age)
+hist(insurance1$BMI)
+hist(insurance1$Children)
+
+#SPREAD 
+##Charges
+var(insurance1$Charges, na.rm = TRUE)
+sd(insurance1$Charges, na.rm = TRUE)
+IQR(insurance1$Charges, na.rm = TRUE)
+range(insurance1$Charges, na.rm = TRUE)
+
+##Age
+var(insurance1$Age, na.rm = TRUE)
+sd(insurance1$Age, na.rm = TRUE)
+IQR(insurance1$Age, na.rm = TRUE)
+range(insurance1$Age, na.rm = TRUE)
+
+##BMI
+var(insurance1$BMI, na.rm = TRUE)
+sd(insurance1$BMI, na.rm = TRUE)
+IQR(insurance1$BMI, na.rm = TRUE)
+range(insurance1$BMI, na.rm = TRUE)
+
+##Children
+var(insurance1$Children, na.rm = TRUE)
+sd(insurance1$Children, na.rm = TRUE)
+IQR(insurance1$Children, na.rm = TRUE)
+range(insurance1$Children, na.rm = TRUE)
+```
+Interpretation Question #1:
+
+# Question 2
+
+Perform bivariate analyses on the quantitative variables (direction, strength and form). Describe the linear association between all variables. 
+
+```{r q2,echo=FALSE, warning=FALSE}
+
+cor(insurance1$Charges,insurance1$Age)
+
+plot(insurance1$Charges,insurance1$Age)
+
+abline(lm(Age ~ Charges, data = insurance1),lty = 1)
+
+cor(insurance1$Charges,insurance1$BMI)
+
+plot(insurance1$Charges,insurance1$BMI)
+
+abline(lm(BMI ~ Charges, data = insurance1),lty = 1)
+
+cor(insurance1$Charges,insurance1$Children)
+
+plot(insurance1$Charges,insurance1$Children)
+
+abline(lm(Children ~ Charges, data = insurance1),lty = 1)
+
+```
+Interpretation for Question #2:
+
+There is a strong, positive, linear association between the age of the patient and the total medical expenses for their insurance plans, meaning that as patients get older, it is more expensive for them to pay for their insurance plan.
+
+There is a weak, positive, linear association between the patient's body mass index and the total medical expenses for their insurance plan. This means that as the body mass index of the patient rises, the expenses of their insurance plan also rises. This means that it is more expensive to pay for their insurance as their health gets worse (since BMI is normally used as a measurement of someone's weight vs their age in relation to overall health).
+
+There is a moderately strong, negative, linear association between the number of children or other dependents covered by an insurance plan and the total medical expenses for their insurance plan. This means that as additional dependents or children get added to a plan, the less the plan costs overall.
+
+# Question 3
+
+Generate a regression equation in the following form:
+
+$$Charges = \beta_{0}+\beta_{1}*Age+\beta_{2}*BMI+\beta_{3}*Children$$
+
+```{r q3}
+model <- lm(Charges ~ Age + BMI + Children, data = insurance1)
+summary(model)
+```
+
+also write out the regression cleanly in this document.
+
+Charges = -# + # * Age + # * BMI - # * Children 
+
+From this linear function, we can then hypothesize the signs of the coefficients:
+
+- $\beta_{Age}$ < 0: We would expect the number of charges to increase as the age of beneficiaries is higher   (holding BMI and birth sex constant)
+- $\beta_{BMI}$ > 0: We would expect the number of charges to increase as the number of BMI increases
+- $\beta_{Children}$ weakly positive?: We might expect as there are more children covered by health insurance, number of charges would decrease as one can predict that children are healthier that older population
+
+# Question 4
+
+An eager insurance representative comes back with a potential client. The client is 40, their BMI is 30, and they have one dependent. Using the regression equation above, predict the amount of medical expenses associated with this policy. (Provide a 95% confidence interval as well)
+
+
+```{r q4}
+newPrediction <- data.frame(Age = 40,
+                            BMI = 30,
+                            Children = 1)
+predict(model, newdata = newPrediction, interval = "confidence", level = .95)
+```
