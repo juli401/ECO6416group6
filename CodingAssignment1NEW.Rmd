@@ -41,11 +41,9 @@ Answer the following questions using complete sentences and attach all output, p
 **For this assignment, ignore the categorical variables (gender, smoker, cities)**
 
 ```{r}
-insurance2 <- read_excel("../Data/insurance_0126_Group6.xlsx")
-insurance1 <- subset(insurance2, select = c("Charges","Age","BMI","Children"))
+insurance_0126_Group6 <- read_excel("Data/insurance_0126_Group6.xlsx")
+insurance1 <- subset(insurance_0126_Group6, select = c("Charges","Age","BMI","Children"))
 ```
-
-
 
 # Question 1
 
@@ -72,6 +70,35 @@ hist(insurance1$Age)
 hist(insurance1$BMI)
 hist(insurance1$Children)
 
+#BOXPLOT
+boxplot(insurance1$Charges,
+  ylab = "Charges")
+main = "Boxplot of Charges"
+boxplot.stats(insurance1$Charges)$out
+out <- boxplot.stats(insurance1$Charges)$out
+mtext(paste("Outliers: ", paste(out, collapse = ", ")))
+
+boxplot(insurance1$Charges,
+  ylab = "Age")
+main = "Boxplot of Age"
+boxplot.stats(insurance1$Age)$out
+out <- boxplot.stats(insurance1$Age)$out
+mtext(paste("Outliers: ", paste(out, collapse = ", ")))
+
+boxplot(insurance1$Charges,
+  ylab = "BMI")
+main = "Boxplot of BMI"
+boxplot.stats(insurance1$BMI)$out
+out <- boxplot.stats(insurance1$BMI)$out
+mtext(paste("Outliers: ", paste(out, collapse = ", ")))
+
+boxplot(insurance1$Charges,
+  ylab = "Children")
+main = "Boxplot of Children"
+boxplot.stats(insurance1$Children)$out
+out <- boxplot.stats(insurance1$Children)$out
+mtext(paste("Outliers: ", paste(out, collapse = ", ")))
+
 #SPREAD 
 ##Charges
 var(insurance1$Charges, na.rm = TRUE)
@@ -97,7 +124,15 @@ sd(insurance1$Children, na.rm = TRUE)
 IQR(insurance1$Children, na.rm = TRUE)
 range(insurance1$Children, na.rm = TRUE)
 ```
-Interpretation Question #1:
+Interpretation Question #1:CHARGES
+Upon observing the R-Studio outputs of the dataset, the distribution of the “Charges” is positively skewed to the right since “Mean” value is greater than “Median” value.ie: mean $10623 > median $8169.
+There is no mode for the “Charges” and 5 outliers are detected from box plot and. The std deviation of “Charges” is affected by those outliers and the value being larger than the “Mean”, the best measure for the central tendency of Charges is median value $8169.
+AGE
+It is observed the mean and median values of “Age” are respectively 39.42 and 37.5 and thus data set has nearly symmetrical distribution. One mode value of “26” is detected and the distribution is unimodal. Also, with the IQR value of 27, no outliers were detected, and the fact is reflected by the low Standard Deviation value of 15.39. With low Standard Deviation value and nearly the same value of mean and median, the best the measure for the central tendency of Age is mean value of 39.42.
+BMI
+For BMI dataset, the “Mean” and “Median” value are nearly identical with the value of 30.59 and 30.73 and thus the distribution is found to be symmetrical. No outliers were detected, and thus Standard deviation value is small with the value of 6.142993. With 2 mode values of 30.59 and 32.965 the distribution is Bimodal. For a bimodal distribution, the best measure to capture the central tendency of o BMI data is the mode and the value should be 32.965.
+CHILDREN
+For Children data set, the Mean value of 1.0 is greater than the Median Value of 0.5 and thus the distribution is positively skewed. The distribution is unimodal with the mode value of “0”. No outliers are detected and Standard deviation is small with 1.22 and thus the best measure for central tendency is the mean and the value is 1.0
 
 # Question 2
 
