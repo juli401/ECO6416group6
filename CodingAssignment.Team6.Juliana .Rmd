@@ -119,7 +119,13 @@ summary(model)
 
 also write out the regression cleanly in this document.
 
-Charges = -# + #*Age + #*BMI - #*Children 
+Charges = -# + # * Age + # * BMI - # * Children 
+
+From this linear function, we can then hypothesize the signs of the coefficients:
+
+- $\beta_{Age}$ < 0: We would expect the number of charges to increase as the age of beneficiaries is higher   (holding BMI and birth sex constant)
+- $\beta_{BMI}$ > 0: We would expect the number of charges to increase as the number of BMI increases
+- $\beta_{Children}$ weakly positive?: We might expect as there are more children covered by health insurance, number of charges would decrease as one can predict that children are healthier that older population
 
 # Question 4
 
