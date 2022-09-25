@@ -180,18 +180,17 @@ summary(model)
 
 also write out the regression cleanly in this document.
 
-Charges = -# + # * Age + # * BMI - # * Children 
+Charges = -9982.54 + 446.22 * Age + 141.97* BMI - 1347.57 * Children 
 
 From this linear function, we can then hypothesize the signs of the coefficients:
 
-- $\beta_{Age}$ < 0: We would expect the number of charges to increase as the age of beneficiaries is higher   (holding BMI and birth sex constant)
-- $\beta_{BMI}$ > 0: We would expect the number of charges to increase as the number of BMI increases
-- $\beta_{Children}$ weakly positive?: We might expect as there are more children covered by health insurance, number of charges would decrease as one can predict that children are healthier that older population
+We would expect the number of charges to increase as the age of benifitairy increase holding BMI and no. of dependent constant.
+The amount of charges would also be expected to increase as BMI as increase while other variables stay the same.
+The amount of charges is negativly related to the no. of dependent (no.of childern) and thus the charges will decrease as the no. of childern increase.
 
 # Question 4
 
 An eager insurance representative comes back with a potential client. The client is 40, their BMI is 30, and they have one dependent. Using the regression equation above, predict the amount of medical expenses associated with this policy. (Provide a 95% confidence interval as well)
-
 
 ```{r q4}
 newPrediction <- data.frame(Age = 40,
@@ -199,3 +198,4 @@ newPrediction <- data.frame(Age = 40,
                             Children = 1)
 predict(model, newdata = newPrediction, interval = "confidence", level = .95)
 ```
+The predicted amount of medical expenses associated with the policy would be $10,777.82
