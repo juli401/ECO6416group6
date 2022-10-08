@@ -134,6 +134,8 @@ For BMI dataset, the “Mean” and “Median” value are nearly identical with
 CHILDREN
 For Children data set, the Mean value of 1.0 is greater than the Median Value of 0.5 and thus the distribution is positively skewed. The distribution is unimodal with the mode value of “0”. No outliers are detected and Standard deviation is small with 1.22 and thus the best measure for central tendency is the mean and the value is 1.0
 
+`improper plot labels (-0.5)`
+
 # Question 2
 
 Perform bivariate analyses on the quantitative variables (direction, strength and form). Describe the linear association between all variables. 
@@ -166,6 +168,8 @@ There is a strong, positive, linear association between the age of the patient a
 There is a weak, positive, linear association between the patient's body mass index and the total medical expenses for their insurance plan. This means that as the body mass index of the patient rises, the expenses of their insurance plan also rises. This means that it is more expensive to pay for their insurance as their health gets worse (since BMI is normally used as a measurement of someone's weight vs their age in relation to overall health).
 
 There is a moderately strong, negative, linear association between the number of children or other dependents covered by an insurance plan and the total medical expenses for their insurance plan. This means that as additional dependents or children get added to a plan, the less the plan costs overall.
+
+`didn't look at all relationships between independent variables (-6)`
 
 # Question 3
 
