@@ -9,7 +9,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#Put any packages you need here
+library(readxl)
+library(dplyr)
+library(jtools)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
