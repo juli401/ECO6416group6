@@ -29,7 +29,7 @@ Answer the following questions using complete sentences and attach all output, p
 
 
 ```{r dataset, include=FALSE}
-insurance <- read.csv("../Data/insurance_0026_Group1.csv")
+insurance <- read.csv("../Data/insurance_0126_Group6.csv")
 ```
 
 
