@@ -60,14 +60,14 @@ Interpret the coefficients of all the independent variables that tested signific
 BMI SEE= 95.01
 C.V at 80%, twi tail test=1.2816
 MOE= 95.01* 1.2816=121.76
-If a client's BMI increases by 1, charges are expected to increase by  141.42 points, give or take 122 points. 
+If a client's BMI increases by 1, charges are expected to increase by  $141.42, give or take $122. 
 
 
 WinterSprings SEE= 1632.11
 C.V at 80%, twi tail test=1.2816
 MOE= 1632.11* 1.2816=2091.712
 
-If a client resides in Wintersprings, he/she is expected to pay higher premium of $3263.15 give or take 2092 points.
+If a client resides in Wintersprings, he/she is expected to pay higher premium of $3263.15 give or take $2092.
 
 
 ## Question 3
@@ -97,12 +97,25 @@ predict(model, newdata= newPredictiondummy, interval = "confidence",levels=.95)
 
 ```
 The predicted amount of medical expenses associated with the policy for a person with the above stated characteristic is $ 4630.
+
 ## Question 4
 
 Compare the model from question 1, to a model that does not include the group of city dummies. Does including the cities reduce the SSE by a statistically significant amount? (check the partial F-test for significance of the dummies as a group). Use $\alpha = 0.05$
 
 ```{r q4}
+reduced_insurance <- insurance[,-(7:9)]
 
+model_reduced <- lm(Charges ~. , data = reduced_insurance)
+
+summary(model_reduced)
 ```
+```{r q4.1}
+anova(model_reduced, model )
+```
+```{r q4.2}
+insurance_dummy <- insurance[,-(7:9)]
 
+insurance_model <- lm(Charges ~. , data = insurance_dummy)
 
+summary(insurance_model)
+```
