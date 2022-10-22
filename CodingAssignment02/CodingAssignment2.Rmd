@@ -50,11 +50,24 @@ regsummary
 
 Which independent variables test significant in a two-tailed test? Use $\alpha = 0.2$
 
+BMI and WinterSprings are the only independent variables that tested significant at the 80% level.
 
 
 ## Question 2
 
 Interpret the coefficients of all the independent variables that tested significant.
+
+BMI SEE= 95.01
+C.V at 80%, twi tail test=1.2816
+MOE= 95.01* 1.2816=121.76
+If a client's BMI increases by 1, charges are expected to increase by  141.42 points, give or take 122 points. 
+
+
+WinterSprings SEE= 1632.11
+C.V at 80%, twi tail test=1.2816
+MOE= 1632.11* 1.2816=2091.712
+
+If a client resides in Wintersprings, he/she is expected to pay higher premium of $3263.15 give or take 2092 points.
 
 
 ## Question 3
@@ -71,9 +84,19 @@ The insurance agent returns with another client:
 Using the regression equation above, predict the amount of medical expenses associated with this policy. (Provide a 95% confidence interval as well)
 
 ```{r q3}
+newPredictiondummy <- data.frame(Age =35 ,
+                            BMI = 26,
+                            Children = 1,
+                            Female=1,
+                            Smoker=0,
+                            WinterSprings=0,
+                            WinterPark=0,
+                            Oviedo=0)
+predict(model, newdata= newPredictiondummy, interval = "confidence",levels=.95)
+
 
 ```
-
+The predicted amount of medical expenses associated with the policy for a person with the above stated characteristic is $ 4630.
 ## Question 4
 
 Compare the model from question 1, to a model that does not include the group of city dummies. Does including the cities reduce the SSE by a statistically significant amount? (check the partial F-test for significance of the dummies as a group). Use $\alpha = 0.05$
