@@ -52,22 +52,27 @@ Which independent variables test significant in a two-tailed test? Use $\alpha =
 
 BMI and WinterSprings are the only independent variables that tested significant at the 80% level.
 
+There is insufficient evidence to conclude that the slope coefficient of Oviedo is different than zero in a two tailed test. 
+
+However, Oviedo would have tested significant on a one-tailed test. We can justify a one tailed test because Oviedo and WinterSprings are two well-established sister cities located in Seminole County, just northeast of Orlando.
 
 ## Question 2
 
 Interpret the coefficients of all the independent variables that tested significant.
 
+Based on the results above, we can see that BMI and WinterSprings test statistically significant. This means that we have sufficient evidence in that the slopes of the coefficients are different than zero.
+
 BMI SEE = 95.01
 C.V at 80%, two tail test = 1.2816
 MOE = 95.01 * 1.2816 = 121.76
-If a client's BMI increases by 1, charges are expected to increase by 141.42 points, give or take 122 points. 
+If a client's BMI increases by 1, charges are expected to increase by 141 points, give or take 122 points. 
 
 
 WinterSprings SEE = 1632.11
 C.V at 80%, two tail test = 1.2816
 MOE = 1632.11 * 1.2816 = 2091.712
 
-If a client lives in WinterSprings, he/she is expected to pay higher premium of $3,263.15 give or take 2,092 points.
+If a client lives in WinterSprings, he/she is expected to pay higher premium of $3,263 give or take 2,092 points.
 
 
 ## Question 3
@@ -120,5 +125,6 @@ insurance_model <- lm(Charges ~. , data = insurance_dummy)
 
 summary(insurance_model)
 ```
+By using the partial F-test to compare Question 1's 41 degrees of freedom vs Question 4's 44 degrees of freedom, we are able to determine that including both does indicate that by using 0.05 the SSE was reduced by a statistically significant amount but that neither was statistically significant if tested independently.
 
-
+This means that though some factors like age (or other displayed factors) will affect insurance premiums, cities themselves won't affect the premiums much in comparison.
