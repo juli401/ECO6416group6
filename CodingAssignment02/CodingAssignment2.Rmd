@@ -119,3 +119,6 @@ insurance_model <- lm(Charges ~. , data = insurance_dummy)
 
 summary(insurance_model)
 ```
+By using the partial F-test to compare Question 1's 41 degrees of freedom vs Question 4's 44 degrees of freedom, we are able to determine that including both does indicate that by using 0.05 the SSE was reduced by a statistically significant amount but that neither was statistically significant if tested independently.
+
+This means that though some factors like age (or other displayed factors) will affect insurance premiums, cities themselves won't affect the premiums much in comparison.
