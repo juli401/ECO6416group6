@@ -1576,8 +1576,10 @@ regsummary</code></pre>
 ## F-statistic: 43.98 on 8 and 41 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>Which independent variables test significant in a two-tailed test?
 Use <span class="math inline">\(\alpha = 0.2\)</span></p>
-<p>BMI and WinterSprings are the only independent variables that tested
-significant at the 80% level.</p>
+<p>Based on the results above, we can see that BMI and WinterSprings are
+the only independent variables that tested significant at the 80% level.
+This means that we have sufficient evidence in that the slopes of the
+coefficients are different than zero.</p>
 <p>There is insufficient evidence to conclude that the slope coefficient
 of Oviedo is different than zero in a two tailed test.</p>
 <p>However, Oviedo would have tested significant on a one-tailed test.
@@ -1589,15 +1591,12 @@ northeast of Orlando.</p>
 <h2>Question 2</h2>
 <p>Interpret the coefficients of all the independent variables that
 tested significant.</p>
-<p>Based on the results above, we can see that BMI and WinterSprings
-test statistically significant. This means that we have sufficient
-evidence in that the slopes of the coefficients are different than
-zero.</p>
 <p>BMI SEE = 95.01 C.V at 80%, two tail test = 1.2816 MOE = 95.01 *
-1.2816 = 121.76 If a client’s BMI increases by 1, charges are expected
-to increase by 141 points, give or take 122 points.</p>
+1.2816 = 121.76</p>
+<p>If a client’s BMI increases by 1, charges are expected to increase by
+141 points, give or take 122 points.</p>
 <p>WinterSprings SEE = 1632.11 C.V at 80%, two tail test = 1.2816 MOE =
-1632.11 * 1.2816 = 2091.712</p>
+1632.11 * 1.2816 = 2,091.712</p>
 <p>If a client lives in WinterSprings, he/she is expected to pay higher
 premium of $3,263 give or take 2,092 points.</p>
 </div>
@@ -1673,41 +1672,14 @@ summary(model_reduced)</code></pre>
 ## 2     41 610320359  3 138702650 3.1059 0.0368 *
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<pre class="r"><code>insurance_dummy &lt;- insurance[,-(7:9)]
-
-insurance_model &lt;- lm(Charges ~. , data = insurance_dummy)
-
-summary(insurance_model)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = Charges ~ ., data = insurance_dummy)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -8492.7 -1462.4  -252.1   859.1 13644.6 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -9134.22    3293.89  -2.773  0.00811 ** 
-## Age           305.46      41.56   7.349 3.53e-09 ***
-## BMI           151.76      97.37   1.559  0.12625    
-## Female      -1166.03    1236.07  -0.943  0.35066    
-## Children      562.40     507.67   1.108  0.27397    
-## Smoker      22781.37    1840.65  12.377 6.29e-16 ***
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 4126 on 44 degrees of freedom
-## Multiple R-squared:  0.8719, Adjusted R-squared:  0.8574 
-## F-statistic:  59.9 on 5 and 44 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>By using the partial F-test to compare Question 1’s 41 degrees of
-freedom vs Question 4’s 44 degrees of freedom, we are able to determine
-that including both does indicate that by using 0.05 the SSE was reduced
-by a statistically significant amount but that neither was statistically
-significant if tested independently.</p>
+<p>By using the partial F-test to compare Question 1 degrees of freedom
+of 41 vs Question 4 degrees of freedom of 44, we are able to determine
+that including the cities did reduce the SSE by a statistically
+significant amount, but none of the cities tested statistically
+significant if tested independently at the 95% level.</p>
 <p>This means that though some factors like age (or other displayed
-factors) will affect insurance premiums, cities themselves won’t affect
-the premiums much in comparison.</p>
+factors) will affect insurance premiums, but the city of where the
+client resides won’t affect the premiums much in comparison.</p>
 </div>
 
 

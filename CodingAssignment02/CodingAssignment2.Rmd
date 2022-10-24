@@ -119,6 +119,6 @@ summary(model_reduced)
 anova(model_reduced, model )
 ```
 
-By using the partial F-test to compare Question 1 degrees of freedom of 41 vs Question 4 degrees of freedom of 44, we are able to determine that including the cities did reduce the SSE by a statistically significant amount, but none of the cities tested statistically significant if tested independently at the 95% level.  
+By using the partial F-test, we are able to determine that including the cities did reduce the SSE by a statistically significant amount, but none of the cities tested statistically significant if tested independently at the 95% level.  
 
 This means that though some factors like age (or other displayed factors) will affect insurance premiums, but the city of where the client resides won't affect the premiums much in comparison.
