@@ -12,6 +12,7 @@ output:
 library(readxl)
 library(dplyr)
 library(jtools)
+sessionInfo()
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -69,7 +70,7 @@ If a client's BMI increases by 1, charges are expected to increase by 141 points
 
 WinterSprings SEE = 1632.11
 C.V at 80%, two tail test = 1.2816
-MOE = 1632.11 * 1.2816 = 2091.712
+MOE = 1632.11 * 1.2816 = 2,091.712
 
 If a client lives in WinterSprings, he/she is expected to pay higher premium of $3,263 give or take 2,092 points.
 
@@ -117,13 +118,7 @@ summary(model_reduced)
 ```{r q4.1}
 anova(model_reduced, model )
 ```
-```{r q4.2}
-insurance_dummy <- insurance[,-(7:9)]
 
-insurance_model <- lm(Charges ~. , data = insurance_dummy)
+By using the partial F-test to compare Question 1 degrees of freedom of 41 vs Question 4 degrees of freedom of 44, we are able to determine that including both did reduce the SSE by a statistically significant amount, but neither one tested statistically significant if tested independently. 
 
-summary(insurance_model)
-```
-By using the partial F-test to compare Question 1's 41 degrees of freedom vs Question 4's 44 degrees of freedom, we are able to determine that including both does indicate that by using 0.05 the SSE was reduced by a statistically significant amount but that neither was statistically significant if tested independently.
-
-This means that though some factors like age (or other displayed factors) will affect insurance premiums, cities themselves won't affect the premiums much in comparison.
+This means that though some factors like age (or other displayed factors) will affect insurance premiums, but the city of where the client resides won't affect the premiums much in comparison.
