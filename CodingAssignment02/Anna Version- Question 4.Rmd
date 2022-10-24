@@ -119,6 +119,3 @@ insurance_model <- lm(Charges ~. , data = insurance_dummy)
 
 summary(insurance_model)
 ```
-From the output, we can see that the F test-statistic from the ANOVA is 3.1059 and the corresponding p-value is 0.0368. Since the p-value is less than .05, we can reject the null hypothesis. By using the partial F-test to compare Question 1's 41 degrees of freedom vs Question 4's 44 degrees of freedom, we are able to determine that including the cities to the regression model reduces the SSE by a statistically significant amount but that neither was statistically significant if tested independently.
-
-This means that though some factors like age (or other displayed factors) will affect insurance premiums, cities themselves won't affect the premiums as much in comparison.
