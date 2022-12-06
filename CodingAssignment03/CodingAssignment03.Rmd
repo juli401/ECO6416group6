@@ -1,7 +1,7 @@
 ---
 title: "Coding Assignment 3"
-author: "Team N"
-date: "Due: 2021-12-09 23:59"
+author: "Team 06"
+date: "Due: 2022-12-09 23:59"
 output: 
   html_document:
     toc: true
@@ -9,7 +9,9 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#Put any packages you need here
+library(readxl)
+library(dplyr)
+library(gt)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -29,7 +31,7 @@ Answer the following questions using complete sentences and attach all output, p
 
 
 ```{r dataset, include=FALSE}
-# Bring in the dataset here.
+insurance <- read.csv("../Data/insurance_0126_Group6.csv")
 ```
 
 
@@ -39,8 +41,14 @@ Answer the following questions using complete sentences and attach all output, p
 Randomly select three observations from the sample and exclude from all modeling (i.e. n=47). Provide the summary statistics (min, max, std, mean, median) of the quantitative variables for the 47 observations.
 
 ```{r q1}
+set.seed(123)
 
+index <- sample(seq_len(nrow(insurance)), size = 3)
 
+train <- insurance[-index,]
+test <- insurance[index,]
+summary(train)
+summary(test)
 ```
 
 
@@ -49,7 +57,7 @@ Randomly select three observations from the sample and exclude from all modeling
 Provide the correlation between all quantitative variables
 
 ```{r}
-
+cor(insurance)
 ```
 
 
@@ -63,7 +71,9 @@ Run a regression that includes all independent variables in the data table. Does
 Implement the solutions from question 3, such as data transformation, along with any other changes you wish. Use the sample data and run a new regression. How have the fit measures changed? How have the signs and significance of the coefficients changed?
 
 ```{r q3}
+model <- lm(Charges ~. , data = train)
 
+summary(model)
 ```
 
 ## Question 5
