@@ -12,6 +12,7 @@ output:
 library(readxl)
 library(dplyr)
 library(gt)
+library(gtsummary)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -30,8 +31,9 @@ The data on the 50 customers in the sample is as follows:
 Answer the following questions using complete sentences and attach all output, plots, etc. within this report.
 
 
-```{r dataset, include=FALSE}
+```{r}
 insurance <- read.csv("../Data/insurance_0126_Group6.csv")
+gt(head(insurance))
 ```
 
 
@@ -48,7 +50,13 @@ index <- sample(seq_len(nrow(insurance)), size = 3)
 train <- insurance[-index,]
 test <- insurance[index,]
 summary(train)
-summary(test)
+
+train %>%
+  tbl_summary(statistic = list(all_continuous() ~ c("{mean} ({sd})",
+                                      "{median} ({p25}, {p75})",
+                                      "{min}, {max}"),
+                all_categorical() ~ "{n} / {N} ({p}%)"),
+type = all_continuous() ~ "continuous2")
 ```
 
 
@@ -72,7 +80,7 @@ summary(model)
 par(mfrow=c(2,2))
 plot(model)
 ```
-
+ 
 
 ## Question 4
 
