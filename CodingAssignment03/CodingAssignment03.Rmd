@@ -64,7 +64,7 @@ cor(insurance)
 ## Question 3
 
 Run a regression that includes all independent variables in the data table. Does the model above violate any of the Gauss-Markov assumptions? If so, what are they and what is the solution for correcting?
-```{r q3}
+```{r fig.height=8, fig.width=8}
 model <- lm(Charges ~. , data = train)
 
 summary(model)
