@@ -67,12 +67,12 @@ Provide the correlation between all quantitative variables
 ```{r}
 cor(insurance)
 ```
-
+Find the correlation between the variables - if closer to 1 that means it's positively correlated. Closer to -1 means negatively correlated.
 
 ## Question 3
 
 Run a regression that includes all independent variables in the data table. Does the model above violate any of the Gauss-Markov assumptions? If so, what are they and what is the solution for correcting?
-```{r fig.height=8, fig.width=8}
+```{r fig.height=4, fig.width=4}
 model <- lm(Charges ~. , data = train)
 
 summary(model)
@@ -80,17 +80,36 @@ summary(model)
 par(mfrow=c(2,2))
 plot(model)
 ```
- 
+The first plot "Residuals vs. Fitted" displays a non-linear relationship, which violates the Gauss-Markov classical assumption.
+
+"Normal Q-Q" displays the assumption of a normally distributed dependent variable for a fixed set of predictors. Without a better line of best fit, we can't verify this.
+
+The "Scale-Location" and the "Residuals vs Leverage" models check for homoskedasticity. This assumption is violated due to the "fanning out" effect present on both models. If this assumption wasn't violated, random points would be present around a horizontal line.
 
 ## Question 4
 
 Implement the solutions from question 3, such as data transformation, along with any other changes you wish. Use the sample data and run a new regression. How have the fit measures changed? How have the signs and significance of the coefficients changed?
 
-```{r q3}
-model <- lm(Charges ~. , data = train)
+```{r q4}
+trainln <- log(train)
+
+trainln <- do.call(data.frame, lapply(trainln, function(x) replace (x, is.infinite(x), 1)))
+
+model <- lm(Charges ~. , data = trainln)
 
 summary(model)
+
+par(mfrow=c(2,2))
+plot(model)
 ```
+The fit measures have changed to be more correlated with the regression line though there are still outliers present. Where before the Gauss-Markov assumptions were being violated in the majority of the models, these updated models are now fitted along the regression line vs before.
+
+``` {r}
+cor(trainln)
+```
+How have the signs and significance of the coefficients changed?
+
+Have to explain positive and negative correlations between coefficients such as age vs charges, smoker vs charges, etc.
 
 ## Question 5
 
