@@ -60,7 +60,7 @@ train %>%
                 all_categorical() ~ "{n} / {N} ({p}%)"),
 type = all_continuous() ~ "continuous2")
 ```
-According to the summary statictic output, the dependent variable,Charges is skewed to the right since it mean is higher than the median by about 2 thousand dollars. Since the standard deviation is high, some outliers could exist in the data.
+According to the summary statistic output, the dependent variable, Charges is skewed to the right since it mean is higher than the median by about 2 thousand dollars. Since the standard deviation is high, some outliers could exist in the data.
 
 ## Question 2
 
@@ -68,9 +68,8 @@ Provide the correlation between all quantitative variables
 
 ```{r}
 cor(insurance)
-vif(original_model)
 ```
-According to the correlation output,"Age" and "Smoker" variables are strongly and directly related to the dependent variable,Charges.Aditionally, no significant VIFs are found for independent variables and no concerning multicolllinearity is detected.
+According to the correlation output,"Age" and "Smoker" variables are strongly and directly related to the dependent variable,Charges. Aditionally, no significant VIFs are found for independent variables and no concerning multicolllinearity is detected.
 
 ## Question 3
 
@@ -84,8 +83,10 @@ summary(original_model)
 
 par(mfrow=c(2,2))
 plot(original_model)
+
+vif(original_model)
 ```
-Question 3 Answers===>
+The first plot
 
 
 ## Question 4
