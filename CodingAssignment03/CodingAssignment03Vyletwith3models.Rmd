@@ -1,0 +1,533 @@
+---
+title: "Coding Assignment 3"
+author: "Team 06"
+date: "Due: 2022-12-09 23:59"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+library(readxl)
+library(dplyr)
+library(gt)
+library(gtsummary)
+library(car) # for vif function
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+A Florida health insurance company wants to predict annual claims for individual clients. The company pulls a random sample of 50 customers. The owner wishes to charge an actuarially fair premium to ensure a normal rate of return. The owner collects all of their current customer’s health care expenses from the last year and compares them with what is known about each customer’s plan. 
+
+The data on the 50 customers in the sample is as follows:
+
+-	Charges: Total medical expenses for a particular insurance plan (in dollars)
+-	Age: Age of the primary beneficiary
+-	BMI: Primary beneficiary’s body mass index (kg/m2)
+-	Female: Primary beneficiary’s birth sex (0 = Male, 1 = Female)
+-	Children: Number of children covered by health insurance plan (includes other dependents as well)
+-	Smoker: Indicator if primary beneficiary is a smoker (0 = non-smoker, 1 = smoker)
+-	Cities: Dummy variables for each city with the default being Sanford
+
+Answer the following questions using complete sentences and attach all output, plots, etc. within this report.
+
+
+```{r}
+insurance <- read.csv("../Data/insurance_0126_Group6.csv")
+
+gt(head(insurance))
+```
+
+
+
+## Question 1
+
+Randomly select three observations from the sample and exclude from all modeling (i.e. n=47). Provide the summary statistics (min, max, std, mean, median) of the quantitative variables for the 47 observations.
+
+```{r q1}
+set.seed(123)
+
+index <- sample(seq_len(nrow(insurance)), size = 3)
+
+train <- insurance[-index,]
+test <- insurance[index,]
+summary(train)
+
+train %>%
+  tbl_summary(statistic = list(all_continuous() ~ c("{mean} ({sd})",
+                                      "{median} ({p25}, {p75})",
+                                      "{min}, {max}"),
+                all_categorical() ~ "{n} / {N} ({p}%)"),
+type = all_continuous() ~ "continuous2")
+```
+According to the summary statictic output, the dependent variable,Charges is skewed to the right since it mean is higher than the median by about 2 thousand dollars. Since the standard deviation is high, some outliers could exist in the data.
+
+## Question 2
+
+Provide the correlation between all quantitative variables
+
+```{r}
+cor(insurance)
+
+```
+According to the correlation output,"Age" and "Smoker" variables are strongly and directly related to the dependent variable,Charges.
+
+## Question 3
+
+Run a regression that includes all independent variables in the data table. Does the model above violate any of the Gauss-Markov assumptions? If so, what are they and what is the solution for correcting?
+
+
+```{r fig.height=8, fig.width=8}
+original_model <- lm(Charges ~., data = train[,c(1:9)] ) #pulling only original data column before data transformation
+
+summary(original_model)
+
+par(mfrow=c(2,2))
+plot(original_model)
+vif(original_model)
+```
+## Question 3 Answers=>
+No significant VIFs are found for independent variables and no concerning multicolllinearity is detected.
+
+The first plot "Residuals vs. Fitted" displays a non-linear relationship, which violates the Gauss-Markov classical assumption.
+
+"Normal Q-Q" displays the assumption of a normally distributed dependent variable for a fixed set of predictors. Without a better line of best fit, we can't verify this.
+
+The "Scale-Location" and the "Residuals vs Leverage" models check for homoskedasticity. This assumption is violated due to the "fanning out" effect present on both models. If this assumption wasn't violated, random points would be present around a horizontal line.
+
+
+## Question 4
+
+Implement the solutions from question 3, such as data transformation, along with any other changes you wish. Use the sample data and run a new regression. How have the fit measures changed? How have the signs and significance of the coefficients changed?
+
+```{r q4}
+
+#to detect non-linear realtionships and non-normally distributed variables
+scatterplotMatrix(train[,c(1,2,3,5)])
+```
+Some nonlinearity between Charges and Age have been found.
+
+```{r q4}
+#Data Transformation
+#taking natural logirthm of Charges to bring possible outliers closer
+
+par(mfrow=c(1,2))
+
+hist(train$Charges) #before
+
+train$lnCharges <- log(train$Charges)
+
+hist(train$lnCharges) #after
+
+```
+Question#4 Answer==>
+Taking natural logirthm of Charges transfrom the dependent variable to be more normally distributed.
+ 
+
+```{r q4}
+#Plotting the relationships After Transformation
+scatterplotMatrix(train[,c(10,2,3)]) # grabbing lnCharges
+
+#to determine if the relationship between Charges and Age is logarithmic or quadratic.
+
+train$lnAge <- log(train$Age)
+train$AgeSquared <- train$Age^2
+scatterplotMatrix(train[,c(10,11,3)]) # lnChares & lnAge
+scatterplotMatrix(train[,c(10,12,3)]) # lnChares & AgeSquared
+
+```
+
+
+
+```{r fig.height=8, fig.width=8}
+# New Regression
+# Models to look at the regression coefficients.
+
+# Model 1lnAge: Age with a logaritmic shape
+
+model_1lnAge <- lm(lnCharges ~., data = train[,c(10,11,3:9)] )
+
+summary(model_1lnAge)
+
+# or
+
+tbl_regression(model_1lnAge,
+               estimate_fun =  ~style_sigfig(.x, digits = 4)) %>% as_gt() %>%
+  gt::tab_source_note(gt::md(paste0("Adjusted R-Squared: ",round(summary(model_1lnAge)$adj.r.squared* 100,digits = 2),"%")))
+par(mfrow=c(2,2))
+plot(model_1lnAge)
+```
+
+
+
+```{r fig.height=8, fig.width=8}
+# Model 2AgeSq:Quadratic Relationship between Age and Charges
+
+model_2AgeSq <- lm(lnCharges ~., data = train[,c(10,3:9,12)] )
+
+summary(model_2AgeSq)
+
+# or
+
+tbl_regression(model_2AgeSq,
+               estimate_fun =  ~style_sigfig(.x, digits = 4)) %>% as_gt() %>%
+  gt::tab_source_note(gt::md(paste0("Adjusted R-Squared: ",round(summary(model_2AgeSq)$adj.r.squared* 100,digits = 2),"%")))
+par(mfrow=c(2,2))
+plot(model_2AgeSq)
+
+```
+
+```{r fig.height=8, fig.width=8}
+# # Model 3lnBMI: BMI with a logaritmic shape
+train$lnBMI <- log(train$BMI)
+
+model_3lnBMI <- lm(lnCharges ~., data = train[,c(10,11,4:9,13)] )
+
+summary(model_3lnBMI)
+
+# or
+
+tbl_regression(model_3lnBMI,
+               estimate_fun =  ~style_sigfig(.x, digits = 4)) %>% as_gt() %>%
+  gt::tab_source_note(gt::md(paste0("Adjusted R-Squared: ",round(summary(model_3lnBMI)$adj.r.squared* 100,digits = 2),"%")))
+par(mfrow=c(2,2))
+plot(model_3lnBMI)
+```
+## Question 4 Answer=> 
+After the data transformation on both depent variable, Charges and 2 independent variables, Age and BMI, regession Model3 is showingimproved measures. Residudal Standard Error has decreased to 0.2518. Adjusted R^2 has increased to 92%. F statistic is also showing a higher number of 68.75 compared to that of Original model.The signs of coefficient didn't change. Aditionally, the independent variable "Children" has become statistically significant for Model3 which was not significant for Original Model.
+
+## Question 5
+
+Use the 3 withheld observations and calculate the performance measures for your best two models. Which is the better model? (remember that "better" depends on whether your outlook is short or long run)
+
+```{r q5}
+test$lnCharges <- log(test$Charges)
+test$lnAge <- log(test$Age)
+test$AgeSquared <- test$Age^2
+test$lnBMI <- log(test$BMI)
+
+test$original_model_pred <- predict(original_model, newdata = test)
+
+test$model_1lnAge_pred <- predict(model_1lnAge,newdata = test) %>% exp()
+
+test$model_2AgeSq_pred <- predict(model_2AgeSq,newdata = test) %>% exp()
+
+test$model_3lnBMI_pred <- predict(model_3lnBMI,newdata = test) %>% exp()
+
+```
+
+```{r q5}
+# Finding the error
+
+test$error_OM <- test$original_model_pred - test$Charges
+
+test$error_1lnAge<- test$model_1lnAge_pred - test$Charges
+
+test$error_2SqAge<- test$model_2AgeSq_pred - test$Charges
+
+test$error_3lnBMI<- test$model_3lnBMI_pred - test$Charges
+
+# what does it do??? where to look for the output? **** Ask prof?
+```
+
+
+```{r q5}
+# Bias
+
+# Original Model
+mean(test$error_OM)
+
+# Model 1lnAge
+mean(test$error_1lnAge)
+
+# Model 2SqAge
+mean(test$error_2SqAge)
+
+#Model 3lnBMI
+mean(test$error_3lnBMI)
+
+```
+BIAS
+[1] 4879.738
+[1] 2656.491 
+[1] 7168.83
+[1] 2627.923 (best) 
+```{r q5}
+# MAE
+
+mae <- function(error_vector){
+  error_vector %>% 
+  abs() %>% 
+  mean()}
+
+# Original Model
+mae(test$error_OM)
+
+# Model 1lnAge
+mae(test$error_1lnAge)
+
+# Model 2SqAge
+mae(test$error_2Sq)
+
+#Model 3lnBMI
+mae(test$error_3lnBMI)
+
+```
+MAE
+[1] 5721.517
+[1] 9328.276 
+[1] 12033.55
+[1] 9300.512 better
+```{r q5}
+### RMSE
+rmse <- function(error_vector){
+   error_vector^2 %>% 
+  mean() %>% 
+  sqrt()}
+
+# Original Model
+rmse(test$error_OM)
+# Model 1lnAge
+rmse(test$error_1lnAge)
+
+# Model 2SqAge
+rmse(test$error_2SqAge)
+
+#Model 3lnBMI
+rmse(test$error_3lnBMI)
+
+```
+RMSE
+[1] 6627.591
+[1] 11853.78 better
+[1] 17117.81
+[1] 11808.4
+
+```{r}
+### MAPE
+mape <- function(error_vector, actual_vector){
+  (error_vector/actual_vector) %>% 
+    abs() %>% 
+    mean()
+}
+
+# Original Model
+mape(test$error_OM, test$Charges)
+# Model 1lnAge
+mape(test$error_1lnAge, test$Charges)
+# Model 2SqAge
+mape(test$error_2SqAge, test$Charges)
+# Model 3lnBMI
+mape(test$error_3lnBMI, test$Charges)
+
+```
+# Question 5 Answer
+Summary of Performance Metrics
+BIAS
+[1] 4879.738
+[1] 2656.491 lower bias better for long run
+[1] 7168.83
+[1] 2627.923 (best) over prediction
+MAE
+[1] 5721.517
+[1] 9328.276 
+[1] 12033.55
+[1] 9300.512 better
+RMSE 
+[1] 6627.591
+[1] 11853.78 
+[1] 17117.81
+[1] 11808.4 better
+MAPE
+[1] 0.3584357
+[1] 0.406728
+[1] 0.4912408
+[1] 0.4066504 better
+
+is our intrest long run or short run? short run
+which model is the best? =>Model3lnBMI
+
+The original model is bad model with high BIAS value and High RMSE value and. Comparing the two proposed models with transfromed data, Model3lnBMI has better BIAS and RMSE value.Model3lnBMI has higher MAE value than that of the Original Model due to possilbe outliers.However,after normalizing the errors, the MAPE value of Model3lnBMI became almost the same as the original MAPE and thus Model3's hight MAE value can be ingnored. With Lowest RMSE among the models and lowest BIAS value, Model3lnBMI is the best model for the short run.
+
+## Question 6
+
+Provide interpretations of the coefficients, do the signs make sense? Perform marginal change analysis (thing 2) on the independent variables.
+
+```{r}
+### Marginal Analysis
+
+model_3lnBMI$coefficients["lnAge"]
+model_3lnBMI$coefficients["Female"]
+model_3lnBMI$coefficients["Childern"]
+model_3lnBMI$coefficients["Smoker"]
+model_3lnBMI$coefficients["WinterSprings"]
+model_3lnBMI$coefficients["WinterPark"]
+model_3lnBMI$coefficients["Oviedo"]
+model_3lnBMI$coefficients["lnBMI"]
+
+A1 <-model_3lnBMI$coefficients["lnAge"]
+antilog_A1 = exp (A1)
+print(antilog_A1)
+
+B1 <-model_3lnBMI$coefficients["lnBMI"]
+antilog_B1 = exp (B1)
+print(antilog_B1)
+
+```
+# Question 6 Answer==>
+Model 3 Coefficients:
+              Estimate      
+(Intercept)    2.92002 ***
+lnAge          1.53895 ***
+Age            4.659697 
+Female         0.13607 .  
+Children       0.07963 *  
+Smoker         1.25585 ***
+WinterSprings  0.19922 .  
+WinterPark    -0.10265       
+Oviedo        -0.01630      
+lnBMI          0.01531 
+BMI            1.015429 
+
+According to the Model3 coefficients, Age is the strongest determinant for the premium charges and smoker found to be the second in order and BMI being the third. Coefficient sings also show the true correlation between each independent variable and the charges.
+
+## Question 7
+
+An eager insurance representative comes back with five potential clients. Using the better of the two models selected above, provide the prediction intervals for the five potential clients using the information provided by the insurance rep.
+
+| Customer | Age | BMI | Female | Children | Smoker | City           |
+| -------- | --- | --- | ------ | -------- | ------ | -------------- | 
+| 1        | 60  | 22  | 1      | 0        | 0      | Oviedo         |
+| 2        | 40  | 30  | 0      | 1        | 0      | Sanford        |
+| 3        | 25  | 25  | 0      | 0        | 1      | Winter Park    |
+| 4        | 33  | 35  | 1      | 2        | 0      | Winter Springs |
+| 5        | 45  | 27  | 1      | 3        | 0      | Oviedo         |
+```{r}
+PredictionCUS1 <- data.frame(Age = 60,
+                            lnAge=4.094345 ,
+                            BMI = 22,
+                            lnBMI=3.091042,
+                            Female = 1,
+                            Children=0,
+                            Smoker=0,
+                            city=0,
+                            WinterSprings=0,
+                            WinterPark=0,
+                            Oviedo=1)
+
+predict(model_3lnBMI, newdata =PredictionCUS1,interval = "confidence",
+      level = .5)
+C1<-predict(model_3lnBMI, newdata =PredictionCUS1,interval = "confidence",
+      level = .5)
+
+# calculate the inverse log using exp( ) function. 
+antilog_C1 = exp (C1)
+print(antilog_C1)
+```
+
+```{r}
+PredictionCUS2 <- data.frame(Age = 40,
+                            lnAge=3.688879 ,
+                            BMI = 30,
+                            lnBMI=3.401197,
+                            Female = 0,
+                            Children=1,
+                            Smoker=0,
+                            city=1,
+                            WinterSprings=0,
+                            WinterPark=0,
+                            Oviedo=0)
+
+predict(model_3lnBMI, newdata =PredictionCUS2,interval = "confidence",
+        level = .5)
+C2<-predict(model_3lnBMI, newdata =PredictionCUS2,interval = "confidence",
+      level = .5)
+antilog_C2 = exp (C2)
+print(antilog_C2)
+```
+
+```{r}
+PredictionCUS3 <- data.frame(Age = 25,
+                            lnAge=3.218876 ,
+                            BMI = 25,
+                            lnBMI=3.218876,
+                            Female = 0,
+                            Children=0,
+                            Smoker=1,
+                            city=0,
+                            WinterSprings=0,
+                            WinterPark=1,
+                            Oviedo=0)
+
+predict(model_3lnBMI, newdata =PredictionCUS3,interval = "confidence",
+        level = .5)
+C3<-predict(model_3lnBMI, newdata =PredictionCUS3,interval = "confidence",
+      level = .5)
+antilog_C3 = exp (C3)
+print(antilog_C3)
+```
+```{r}
+PredictionCUS4 <- data.frame(Age = 33,
+                            lnAge=3.496508 ,
+                            BMI = 35,
+                            lnBMI=3.555348,
+                            Female = 1,
+                            Children=2,
+                            Smoker=0,
+                            city=0,
+                            WinterSprings=1,
+                            WinterPark=0,
+                            Oviedo=0)
+
+predict(model_3lnBMI, newdata =PredictionCUS4,interval = "confidence",
+        level = .5)
+C4<-predict(model_3lnBMI, newdata =PredictionCUS4,interval = "confidence",
+      level = .5)
+antilog_C4 = exp (C4)
+print(antilog_C4)
+```
+
+```{r}
+PredictionCUS5 <- data.frame(Age = 45,
+                            lnAge=3.806662 ,
+                            BMI = 27,
+                            lnBMI=3.295837,
+                            Female = 1,
+                            Children=3,
+                            Smoker=0,
+                            city=0,
+                            WinterSprings=0,
+                            WinterPark=0,
+                            Oviedo=1)
+
+predict(model_3lnBMI, newdata =PredictionCUS5,interval = "confidence",
+        level = .5)
+C5<-predict(model_3lnBMI, newdata =PredictionCUS5,interval = "confidence",
+      level = .5)
+antilog_C5 = exp (C5)
+print(antilog_C5)
+```
+# Question 7 Answer=>
+Prediction Intervals
+Customer1:  fit      lwr      upr
+          11945.47 10981.95 12993.52
+Customer2:  fit      lwr      upr
+          6177.858 5822.709 6554.668
+Customer3:  fit     lwr      upr
+          8744.609 7898.18 9681.747
+Customer4:  fit     lwr      upr
+          6974.123 6572.32 7400.491
+Customer5:  fit      lwr      upr
+          9773.352 9095.658 10501.54
+
+## Question 8
+
+The owner notices that some of the predictions are wider than others, explain why.
+
+Some of the predictions are wider than others because of 
+uncertainty around a single observation.Extrapolation error could also cause the wide prediction.
+
+## Question 9 
+
+Are there any prediction problems that occur with the five potential clients? If so, explain.
+
