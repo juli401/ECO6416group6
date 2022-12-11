@@ -108,7 +108,7 @@ scatterplotMatrix(train[,c(1,2,3,5)])
 ```
 Some nonlinearity between Charges and Age have been found.
 
-```{r q4}
+```{r q4.1}
 #Data Transformation
 #taking natural logirthm of Charges to bring possible outliers closer
 
@@ -125,7 +125,7 @@ Question#4 Answer==>
 Taking natural logirthm of Charges transfrom the dependent variable to be more normally distributed.
  
 
-```{r q4}
+```{r q4.2}
 #Plotting the relationships After Transformation
 scatterplotMatrix(train[,c(10,2,3)]) # grabbing lnCharges
 
@@ -217,7 +217,7 @@ test$model_3lnBMI_pred <- predict(model_3lnBMI,newdata = test) %>% exp()
 
 ```
 
-```{r q5}
+```{r q5.1}
 # Finding the error
 
 test$error_OM <- test$original_model_pred - test$Charges
@@ -230,7 +230,7 @@ test$error_3lnBMI<- test$model_3lnBMI_pred - test$Charges
 
 ```
 
-```{r q5}
+```{r q5.2}
 # Bias
 
 # Original Model
@@ -251,7 +251,7 @@ BIAS
 [1] 2656.491 
 [1] 7168.83
 [1] 2627.923 (best) 
-```{r q5}
+```{r q5.3}
 # MAE
 
 mae <- function(error_vector){
@@ -277,7 +277,7 @@ MAE
 [1] 9328.276 
 [1] 12033.55
 [1] 9300.512 better
-```{r q5}
+```{r q5.4}
 ### RMSE
 rmse <- function(error_vector){
    error_vector^2 %>% 
@@ -302,7 +302,7 @@ RMSE
 [1] 17117.81
 [1] 11808.4
 
-```{r}
+```{r q5.5}
 ### MAPE
 mape <- function(error_vector, actual_vector){
   (error_vector/actual_vector) %>% 

@@ -304,7 +304,7 @@ tractor answer example=>Looking at these three models, the initial model was the
 Provide interpretations of the coefficients, do the signs make sense? Perform marginal change analysis (thing 2) on the independent variables.
 
 ```{r}
-
+original_model$coefficients[2]*.25
 ```
 
 ## Question 7
